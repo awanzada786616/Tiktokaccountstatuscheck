@@ -1,354 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shadow Tools Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TikTok Video Downloader</title>
+  <script>
+    async function downloadVideo() {
+      const url = document.getElementById('tiktokUrl').value;
+      const apiUrl = `https://tikwm.com/api/?url=${encodeURIComponent(url)}`;try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    if (data && data.data && data.data.play) {
+      const videoLink = data.data.play;
+      document.getElementById('result').innerHTML = `
+        <video width="300" controls>
+          <source src="${videoLink}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <br/>
+        <a href="${videoLink}" download>Download Video</a>
+      `;
+    } else {
+      document.getElementById('result').innerText = 'Video not found!';
+    }
+  } catch (error) {
+    console.error(error);
+    document.getElementById('result').innerText = 'Error fetching video!';
+  }
+}
+
+  </script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     body {
-      background: #000; /* Dark background for neon contrast */
-      color: #ffffff;
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f4f7fc;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #fff;
       padding: 20px;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    #particles-js {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: -1; /* Particles in background */
-    }
-
-    .dashboard-container {
-      background: rgba(0, 0, 0, 0.85);
-      border: 3px solid #00ffcc;
-      border-radius: 25px;
-      padding: 40px;
-      box-shadow: 0 0 40px rgba(0, 255, 204, 0.6);
-      text-align: center;
-      max-width: 800px;
-      width: 100%;
-      animation: fadeIn 1.5s ease-in-out;
-      position: relative;
-      z-index: 1;
-    }
-
-    .dashboard-container h1 {
-      font-size: 3.5rem;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, #00ffcc, #ff00cc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 15px rgba(0, 255, 204, 0.8);
-      animation: glowText 2s infinite alternate;
-    }
-
-    .dashboard-container p {
-      font-size: 1.2rem;
-      color: #cccccc;
-      margin-bottom: 30px;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    .button-container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr); /* 2 columns for desktop */
-      gap: 20px;
-      justify-items: center;
-    }
-
-    .button-container a button {
-      padding: 15px 30px;
-      background: #111;
-      border: 3px solid #00ffcc;
-      color: #00ffcc;
-      font-size: 1.3rem;
-      font-weight: bold;
-      cursor: pointer;
       border-radius: 12px;
-      width: 300px;
-      transition: all 0.4s ease;
-      animation: slideIn 0.8s forwards;
-      opacity: 0;
-      box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
-    }
-
-    /* Animation delays for buttons */
-    .button-container a:nth-child(1) button { animation-delay: 0.3s; }
-    .button-container a:nth-child(2) button { animation-delay: 0.4s; }
-    .button-container a:nth-child(3) button { animation-delay: 0.5s; }
-    .button-container a:nth-child(4) button { animation-delay: 0.6s; }
-    .button-container a:nth-child(5) button { animation-delay: 0.7s; }
-    .button-container a:nth-child(6) button { animation-delay: 0.8s; }
-    .button-container a:nth-child(7) button { animation-delay: 0.9s; }
-    .button-container a:nth-child(8) button { animation-delay: 1.0s; }
-    .button-container a:nth-child(9) button { animation-delay: 1.1s; }
-    .button-container a:nth-child(10) button { animation-delay: 1.2s; }
-    .button-container a:nth-child(11) button { animation-delay: 1.3s; }
-    .button-container a:nth-child(12) button { animation-delay: 1.4s; }
-
-    .button-container a button:hover {
-      background: #00ffcc;
-      color: #000;
-      box-shadow: 0 0 20px #00ffcc, 0 0 50px #00ffcc, 0 0 80px #00ffcc;
-      transform: scale(1.1) rotate(2deg);
-    }
-
-    .footer {
-      margin-top: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       text-align: center;
+      max-width: 400px;
     }
-
-    .whatsapp-button {
-      padding: 15px 30px;
-      background: #111;
-      border: 3px solid #25D366;
-      color: #25D366;
-      font-size: 1.3rem;
-      font-weight: bold;
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #ff0050;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      border-radius: 12px;
-      width: 300px;
-      text-decoration: none;
-      display: inline-block;
-      transition: all 0.4s ease;
-      animation: slideIn 1.5s forwards;
-      opacity: 0;
-      box-shadow: 0 0 10px rgba(37, 211, 102, 0.3);
+      font-size: 16px;
     }
-
-    .whatsapp-button:hover {
-      background: #25D366;
-      color: #000;
-      box-shadow: 0 0 20px #25D366, 0 0 50px #25D366;
-      transform: scale(1.1) rotate(2deg);
+    button:hover {
+      background: #e60046;
     }
-
-    /* Keyframes */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideIn {
-      from { transform: translateX(-60px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    @keyframes glowText {
-      from { text-shadow: 0 0 15px rgba(0, 255, 204, 0.8); }
-      to { text-shadow: 0 0 30px rgba(255, 0, 204, 0.8); }
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .dashboard-container {
-        padding: 20px;
-        max-width: 90%;
-      }
-
-      .dashboard-container h1 {
-        font-size: 2.5rem;
-      }
-
-      .dashboard-container p {
-        font-size: 1rem;
-      }
-
-      .button-container {
-        grid-template-columns: 1fr; /* 1 column for mobile */
-      }
-
-      .button-container a button {
-        font-size: 1.1rem;
-        padding: 12px 20px;
-        width: 280px;
-      }
-
-      .whatsapp-button {
-        font-size: 1.1rem;
-        padding: 12px 20px;
-        width: 280px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .dashboard-container {
-        padding: 15px;
-      }
-
-      .dashboard-container h1 {
-        font-size: 2rem;
-      }
-
-      .dashboard-container p {
-        font-size: 0.9rem;
-      }
-
-      .button-container a button {
-        font-size: 1rem;
-        padding: 10px 15px;
-        width: 250px;
-      }
-
-      .whatsapp-button {
-        font-size: 1rem;
-        padding: 10px 15px;
-        width: 250px;
-      }
+    #result {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div id="particles-js"></div>
-  <div class="dashboard-container">
-    <h1>Shadow Tools</h1>
-    <p>Developed by Shadow</p>
-    <div class="button-container">
-      <a href="https://wasismmpannel.online"><button>TikTok Free Views</button></a>
-      <a href="tiktoklikes.php"><button>TikTok Likes</button></a>
-      <a href="simdetails.php"><button>SIM Details</button></a>
-      <a href="shadowsim.php"><button>Shadow Sim Database 2</button></a>
-     <a href="shadowjazz.php"><button>Jazz Franchise Data</button></a>
-     <a href="shadowfir.php"><button>Fir Registeration</button></a>
-     <a href="shadowdetails.php"><button>True Caller Details</button></a>
-      <a href="shadowddos.php"><button>Website Ddos</button></a>
-      <a href="purposal.php"><button>Love Purposal</button></a>
-      <a href="fakesms.php"><button>Fake Sms Genrator</button></a>
-      <a href="accountstatus.php"><button>Tiktok Account Status Check</button></a>
-      <a href="shadowseo.php"><button>Shadow Seo Tool</button></a>
-      <a href="Ecom.php"><button>Sales Analyzer</button></a>
-      <a href="Luckname.php"><button>Luck Name Checker</button></a>
-      <a href="shadowtempmail.php"><button>Shadow Temp Mail</button></a>
-      <a href="sms-bomber.php"><button>Shadow Sms Bomber</button></a>
-      <a href="checkip.php"><button>Shadow Ip Checker</button></a>
-      <a href="shadowip.php"><button>Shadow Ip Detail Finder</button></a>
-      <a href="prank.php"><button>Prank With Your Friend</button></a>
-         <a href="creditcard.php"><button>Credit Card Genrator</button></a>
-         <a href="webscraper.php"><button>Web Scrapper</button></a>
-         <a href="tiktokreport.php"><button>Tiktok Account Report</button></a>
-         <a href="instagramreport.php"><button>Instagram Account Report</button></a>
-         <a href="whatsappreport.php"><button>Whatsapp Account report</button></a>
-         <a href="facebookreport.php"><button>Facebook Account Report</button></a>
-         <a href="quotex.php"><button>Quotex Signals</button></a>
-                  <a href="avaitorpredictor.php"><button>Aviator Predictor</button></a>
-         <a href="tiktokdetails.phpp"><button>Tiktok Details Founder</button></a>
-         <a href="future.php"><button>Future Analyzer</button></a>
-         <a href="tiktokdowloader.php"><button>Tiktok Vedio Dowloader</button></a>
-         <a href="pinterest.php"><button>Pinterest Vedio Dowloader</button></a>
-         <a href="quran.php"><button>Full Quran</button></a>
-         <a href="shadowimagegen.php"><button>Shadow Text To Image Ai</button></a>
-            <a href="shadowanalyzeimage.php"><button>Get Details By Image</button></a>
-         <a href="8171checker.php"><button>8171 Ehsas Program Checker</button></a>
-        <a href="shadowunban.php"><button>Shadow Unban Tool</button></a>
-        <a href="shadowwabantool.php"><button>Shadow Ban Tool</button></a>
-        <a href="whatsappdpfetcher.php"><button>Whatsapp DP Fetcher</button></a>
-  <a href="wasitv.vercel.app"><button>Shadow Live Tv</button></a>
-        
-
-       <a href="shadowdatabase.site"><button>Shadow Sim Database</button></a>
-         <a href="shadowspy.site"><button>Shadow Spy Tool</button></a>
-         <a href="shadowpaksim.xyz"><button>Shadow Nadra Database</button></a>
-         
-        
-
-    </div>
+  <div class="container">
+    <h2>🎵 TikTok Video Downloader</h2>
+    <input type="text" id="tiktokUrl" placeholder="Paste TikTok URL here" />
+    <button onclick="downloadVideo()">Download</button>
+    <div id="result"></div>
   </div>
-
-  <div class="footer">
-    <a href="https://whatsapp.com/channel/0029ValH0yv6GcG8pM6AN432" class="whatsapp-button">Join WhatsApp Channel</a>
-  </div>
-
-  <!-- Particles.js for background animation -->
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-  <script>
-    particlesJS("particles-js", {
-      "particles": {
-        "number": {
-          "value": 80,
-          "density": {
-            "enable": true,
-            "value_area": 800
-          }
-        },
-        "color": {
-          "value": "#00ffcc"
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          }
-        },
-        "opacity": {
-          "value": 0.5,
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 1,
-            "opacity_min": 0.1,
-            "sync": false
-          }
-        },
-        "size": {
-          "value": 3,
-          "random": true,
-          "anim": {
-            "enable": false,
-            "speed": 40,
-            "size_min": 0.1,
-            "sync": false
-          }
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#00ffcc",
-          "opacity": 0.4,
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 2,
-          "direction": "none",
-          "random": false,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false
-        }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "repulse"
-          },
-          "onclick": {
-            "enable": true,
-            "mode": "push"
-          },
-          "resize": true
-        }
-      },
-      "retina_detect": true
-    });
-  </script>
 </body>
 </html>
