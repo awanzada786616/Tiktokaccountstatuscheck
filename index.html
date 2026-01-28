@@ -1,82 +1,416 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ZEESHU X TIKTOK DOWNLOADER</title>
-  <script>
-    async function downloadVideo() {
-      const url = document.getElementById('tiktokUrl').value;
-      const apiUrl = `https://tikwm.com/api/?url=${encodeURIComponent(url)}`;try {
-    const response = await fetch(apiUrl);
-    const data = await response.json();
+  <title>Zeeshu x TikTok Downloader</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    if (data && data.data && data.data.play) {
-      const videoLink = data.data.play;
-      document.getElementById('result').innerHTML = `
-        <video width="300" controls>
-          <source src="${videoLink}" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-        <br/>
-        <a href="${videoLink}" download>Download Video</a>
-      `;
-    } else {
-      document.getElementById('result').innerText = 'Video not found!';
-    }
-  } catch (error) {
-    console.error(error);
-    document.getElementById('result').innerText = 'Error fetching video!';
-  }
-}
-
-  </script>
   <style>
+    :root {
+      --bg-color: #0f0f12;
+      --sidebar-bg: #1a1a1f;
+      --card-bg: #25252b;
+      --text-color: #ffffff;
+      --accent-pink: #ff0050;
+      --accent-cyan: #00f2ea;
+      --hover-bg: #33333a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f7fc;
+      background: var(--bg-color);
+      color: var(--text-color);
       display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
+      overflow: hidden;
     }
-    .container {
-      background: #fff;
+
+    /* --- Sidebar --- */
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-right: 1px solid #333;
+      transition: all 0.3s;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo span {
+      background: -webkit-linear-gradient(45deg, var(--accent-cyan), var(--accent-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      transition: 0.3s;
+      font-size: 15px;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      background: var(--hover-bg);
+      color: var(--text-color);
+    }
+
+    .nav-links a.active {
+      border-left: 3px solid var(--accent-pink);
+    }
+
+    /* --- Main Content --- */
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header-area {
       text-align: center;
-      max-width: 400px;
+      margin-bottom: 30px;
     }
-    input {
+
+    .header-area h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .header-area p {
+      color: #aaa;
+    }
+
+    /* --- Input Section --- */
+    .search-box {
       width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
       padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      border: 1px solid #333;
     }
-    button {
-      background: #ff0050;
+
+    .search-box i {
+      padding: 0 15px;
+      color: #aaa;
+    }
+
+    .search-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
       color: white;
-      padding: 10px 20px;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .search-box button {
+      background: linear-gradient(45deg, var(--accent-pink), #c4003d);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-box button:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    .search-box button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+
+    /* --- Result Section --- */
+    #result {
+      margin-top: 30px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .video-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .author-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .author-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-cyan);
+    }
+
+    .author-text h4 {
+      font-size: 16px;
+      color: white;
+    }
+
+    .author-text span {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .video-desc {
+      font-size: 14px;
+      color: #ddd;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 10px;
+      background: black;
+      max-height: 400px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 15px;
+      margin: 10px 0;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn-dl {
+      flex: 1;
+      padding: 12px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: 0.2s;
     }
-    button:hover {
-      background: #e60046;
+
+    .btn-video {
+      background: var(--accent-cyan);
+      color: #000;
     }
-    #result {
+    
+    .btn-music {
+      background: #333;
+      color: white;
+      border: 1px solid #444;
+    }
+
+    .btn-dl:hover {
+      filter: brightness(1.1);
+    }
+
+    /* --- Loader --- */
+    .loader {
+      display: none;
       margin-top: 20px;
+      text-align: center;
+    }
+    .loader i {
+      font-size: 40px;
+      color: var(--accent-cyan);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- Responsive --- */
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        height: 60px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        border-bottom: 1px solid #333;
+        border-right: none;
+      }
+      .logo { margin-bottom: 0; font-size: 18px; }
+      .nav-links { display: none; } /* Hide menu on mobile for simplicity, or add hamburger toggle */
+      .main-content { padding: 20px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>🎵 TikTok Video Downloader</h2>
-    <input type="text" id="tiktokUrl" placeholder="Paste TikTok URL here" />
-    <button onclick="downloadVideo()">Download</button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <i class="fab fa-tiktok"></i> <span>ZEESHU</span> DL
+    </div>
+    <div class="nav-links">
+      <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
+      <a href="#"><i class="fas fa-history"></i> History</a>
+      <a href="#"><i class="fas fa-fire"></i> Trending</a>
+      <a href="#"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#"><i class="fas fa-info-circle"></i> About</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="header-area">
+      <h1>TikTok Video Downloader</h1>
+      <p>Download videos without watermark in HD</p>
+    </div>
+
+    <div class="search-box">
+      <i class="fas fa-link"></i>
+      <input type="text" id="tiktokUrl" placeholder="Paste TikTok URL here..." />
+      <button onclick="downloadVideo()" id="searchBtn">
+        <i class="fas fa-download"></i> Go
+      </button>
+    </div>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+      <i class="fas fa-spinner"></i>
+    </div>
+
+    <!-- Result Area -->
     <div id="result"></div>
-  </div>
+  </main>
+
+  <script>
+    async function downloadVideo() {
+      const urlInput = document.getElementById('tiktokUrl');
+      const url = urlInput.value;
+      const resultDiv = document.getElementById('result');
+      const loader = document.getElementById('loader');
+      const btn = document.getElementById('searchBtn');
+
+      if (!url) {
+        alert("Please paste a link first!");
+        return;
+      }
+
+      // UI States
+      resultDiv.innerHTML = '';
+      loader.style.display = 'block';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+      const apiUrl = `https://tikwm.com/api/?url=${encodeURIComponent(url)}`;
+
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        loader.style.display = 'none';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download"></i> Go';
+
+        if (data && data.data) {
+          const videoInfo = data.data;
+          
+          // Construct the UI Card
+          resultDiv.innerHTML = `
+            <div class="video-card">
+              <div class="author-info">
+                <img src="${videoInfo.author.avatar}" alt="User" class="author-img">
+                <div class="author-text">
+                  <h4>${videoInfo.author.nickname}</h4>
+                  <span>@${videoInfo.author.unique_id}</span>
+                </div>
+              </div>
+
+              <div class="video-desc">
+                ${videoInfo.title ? videoInfo.title : 'No description'}
+              </div>
+              
+              <div class="stats">
+                <span><i class="fas fa-play"></i> ${videoInfo.play_count.toLocaleString()}</span>
+                <span><i class="fas fa-heart"></i> ${videoInfo.digg_count.toLocaleString()}</span>
+                <span><i class="fas fa-comment"></i> ${videoInfo.comment_count.toLocaleString()}</span>
+              </div>
+
+              <video controls autoplay loop>
+                <source src="${videoInfo.play}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+
+              <div class="action-buttons">
+                <a href="${videoInfo.play}" download class="btn-dl btn-video" target="_blank">
+                  <i class="fas fa-video"></i> Video (HD)
+                </a>
+                <a href="${videoInfo.music}" download class="btn-dl btn-music" target="_blank">
+                  <i class="fas fa-music"></i> Music
+                </a>
+              </div>
+            </div>
+          `;
+        } else {
+          resultDiv.innerHTML = '<p style="color: #ff0050; text-align:center;">Video not found or Private!</p>';
+        }
+      } catch (error) {
+        console.error(error);
+        loader.style.display = 'none';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download"></i> Go';
+        resultDiv.innerHTML = '<p style="color: #ff0050; text-align:center;">Error fetching video. Check Internet.</p>';
+      }
+    }
+  </script>
 </body>
 </html>
